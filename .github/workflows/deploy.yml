@@ -43,10 +43,11 @@ jobs:
           test -f src/build/contracts/DoctorRegistration.json
           test -f src/build/contracts/PatientRegistration.json
           test -f src/build/contracts/UploadEhr.json
-
+   
       - name: Build React application
         run: npm run build
         env:
+          CI: "false"
           PUBLIC_URL: /EHR
 
       - name: Upload build files
