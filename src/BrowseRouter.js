@@ -54,7 +54,7 @@ const BrowseRouter = () => {
     init();
   }, []);
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/EHR">
 
       <Routes>
         <Route path="/AboutPage" element={<AboutUs></AboutUs>}></Route>
