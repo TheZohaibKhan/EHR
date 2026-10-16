@@ -4,80 +4,84 @@ This diagram illustrates how the **Decentralized Electronic Health Record (EHR)*
 
 ```mermaid
 graph TD
-    %% Nodes
-    subgraph Client [User's Device (Browser)]
-        UI[React Application UI]
-        Wallet[MetaMask Wallet]
+    %% Client
+    subgraph Client["User Device - Browser"]
+        UI["React Application UI"]
+        Wallet["MetaMask Wallet"]
     end
 
-    subgraph Hosting [Web Server (Local/Cloud)]
-        AppServer[React Build Files]
+    %% Hosting
+    subgraph Hosting["Web Server - Local or Cloud"]
+        AppServer["React Build Files"]
     end
 
-    subgraph Storage [IPFS / Pinata Cloud]
-        IPFSNode[IPFS Network]
-        Files[Medical Records (PDF, X-Ray)]
+    %% Storage
+    subgraph Storage["IPFS / Pinata Cloud"]
+        IPFSNode["IPFS Network"]
+        Files["Medical Records - PDFs and Images"]
     end
 
-    subgraph Blockchain [Ethereum Network (Ganache/Testnet)]
-        EthNode[Ethereum Node]
-        Contracts[Smart Contracts: UploadEhr, PatientRegistration]
-        Ledger[Immutable Ledger (Hashes)]
+    %% Blockchain
+    subgraph Blockchain["Ethereum-Compatible Network"]
+        EthNode["Ethereum Node - Ganache or Testnet"]
+        Contracts["Smart Contracts: UploadEhr and Registration"]
+        Ledger["Blockchain Ledger - Record Hashes"]
     end
 
-    %% Interactions
-    User((User)) -- Access URL --> UI
-    UI -- Fetches App --> AppServer
-    
-    %% File Upload Flow
-    UI -- 1. Uploads File --> IPFSNode
-    IPFSNode -- Stores --> Files
-    IPFSNode -- 2. Returns Hash (CID) --> UI
-    
-    %% Blockchain Transaction Flow
-    UI -- 3. Sends Hash Transaction --> Wallet
-    Wallet -- Signs & Broadcasts --> EthNode
-    EthNode -- Executes --> Contracts
-    Contracts -- Stores Hash on --> Ledger
+    %% Application access
+    User((User)) -->|Accesses URL| UI
+    AppServer -->|Serves HTML, CSS and JavaScript| UI
 
-    %% Styling
-    classDef storage fill:#f9f,stroke:#333,stroke-width:2px;
-    classDef blockchain fill:#ccf,stroke:#333,stroke-width:2px;
-    classDef user fill:#ff9,stroke:#333,stroke-width:2px;
-    classDef client fill:#eef,stroke:#333,stroke-width:1px;
-    
-    class IPFSNode,Files storage;
-    class EthNode,Contracts,Ledger blockchain;
-    class User user;
-    class Client client;
+    %% File upload flow
+    UI -->|1. Uploads file| IPFSNode
+    IPFSNode -->|Stores file| Files
+    IPFSNode -->|2. Returns CID| UI
+
+    %% Blockchain transaction flow
+    UI -->|3. Requests transaction| Wallet
+    Wallet -->|Signs and broadcasts| EthNode
+    EthNode -->|Executes contract call| Contracts
+    Contracts -->|Updates on-chain state| Ledger
+
+    %% Return information
+    Ledger -->|Transaction result| EthNode
+    EthNode -->|Receipt or result| UI
 ```
 
 ## Explanation of Components
 
-1.  **Client Device (User's Browser)**:
-    *   **React Application (UI)**: The frontend interface where patients and doctors interact.
-    *   **MetaMask Wallet**: A browser extension that holds the user's private keys and authorizes transactions on the blockchain.
+### 1. Client Device — User's Browser
 
-2.  **Web Server**:
-    *   Serves the static files (HTML, JS, CSS) of the React application to the user's browser. In development, this is your `localhost:3000`.
+- **React Application UI:** The frontend where patients, doctors, and other users interact with the application.
+- **MetaMask Wallet:** A browser extension that manages the user's wallet and requests approval for blockchain transactions.
 
-3.  **IPFS / Pinata Cloud (Storage Layer)**:
-    *   **Role**: Stores the heavy medical files (PDFs, Images) securely and permanently.
-    *   **Interaction**: The app uploads files here first to avoid high gas fees on Ethereum. Pinata returns a unique content hash (CID).
+### 2. Web Server
 
-4.  **Ethereum Blockchain (Logic & Verification Layer)**:
-    *   **Role**: Executes Smart Contracts and stores the *proof* of the medical records (the IPFS Hash).
-    *   **Smart Contracts**:
-        *   `PatientRegistration`: Manages user identities and permissions.
-        *   `UploadEhr`: Stores the link between a Patient's Address and their IPFS File Hash.
-    *   **Ledger**: An immutable record of all uploads and access grants.
+- **Role:** Serves the static HTML, JavaScript, and CSS files required by the React application.
+- **Development:** The app can run locally at `http://localhost:3000`.
+- **Deployment:** GitHub Pages hosts the published frontend files. It does not run the blockchain node or deploy smart contracts.
 
-## Use Case: Uploading a Record
+### 3. IPFS / Pinata Cloud — Storage Layer
 
-1.  **User** selects a file on the **React UI**.
-2.  **React UI** uploads the file to **Pinata (IPFS)**.
-3.  **Pinata** returns a unique hash (e.g., `QmXyZ...`).
-4.  **React UI** requests **MetaMask** to sign a transaction containing this hash.
-5.  **User** approves the transaction.
-6.  The transaction is sent to the **Ethereum Blockchain**.
-7.  The **Smart Contract** verifies the user and permanently stores the hash on the **Ledger**.
+- **Role:** Stores files such as PDFs and medical images outside the blockchain.
+- **Interaction:** The application uploads a file to the configured storage service and receives a content identifier (CID).
+- **Important:** IPFS content is not automatically private or encrypted. A CID alone does not restrict access to a file.
+
+### 4. Ethereum-Compatible Blockchain — Logic and Verification Layer
+
+- **Role:** Executes deployed smart contracts and maintains on-chain state.
+- **Smart contracts:** `PatientRegistration`, `DoctorRegistration`, `DiagnosticRegistration`, and `UploadEhr` are included in the project.
+- **Ledger:** Records blockchain transactions and contract state. The exact information stored depends on the smart-contract implementation.
+
+## Use Case: Uploading a Medical Record
+
+1. The user selects a file in the React application.
+2. The frontend uploads the file to the configured IPFS/Pinata service.
+3. The service returns a content identifier (CID).
+4. The frontend prepares a transaction referencing the CID.
+5. MetaMask asks the user to approve or reject the transaction.
+6. If approved, the transaction is sent to the configured blockchain network.
+7. The deployed smart contract processes the request and updates its state if the transaction succeeds.
+8. The application displays the transaction result.
+
+**Security note:** This is an academic/demo project. Use sample files and test accounts only until the application has undergone appropriate security and privacy review.
