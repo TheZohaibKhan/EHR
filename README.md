@@ -1,17 +1,17 @@
 # SEHR — Secure Electronic Health Records on Blockchain
 
 <p align="center">
-  <strong>A decentralized Electronic Health Record (EHR) application using React, Ethereum smart contracts, MetaMask, and IPFS.</strong>
+  <strong>A decentralized Electronic Health Record (EHR) demo built with React, Solidity smart contracts, MetaMask, Web3.js, and IPFS/Pinata.</strong>
 </p>
 
 <p align="center">
-  <a href="https://ehr.pages.dev">🌐 Live Demo</a> ·
-  <a href="https://github.com/TheZohaibKhan/EHR">📦 Source Repository</a> ·
-  <a href="docs/DEPLOYMENT_DIAGRAM.md">Deployment Diagram</a> ·
-  <a href="docs/SEQUENCE_DIAGRAM.md">Upload Sequence Diagram</a>
+  <a href="https://thezohaibkhan.github.io/EHR/">🌐 GitHub Pages Deployment</a> ·
+  <a href="https://github.com/TheZohaibKhan/EHR">📦 Source Code</a> ·
+  <a href="docs/DEPLOYMENT_DIAGRAM.md">Architecture Diagram</a> ·
+  <a href="docs/SEQUENCE_DIAGRAM.md">Upload Sequence</a>
 </p>
 
-> **Live demo note:** `https://ehr.pages.dev` is the intended demo address from the project deployment plan. If it has not been deployed or configured yet, publish the app first and replace this URL with the real deployed URL. A live page alone does not guarantee that wallet, smart-contract, or IPFS operations are connected.
+> **Deployment status:** The GitHub Pages URL is configured and serves the frontend, but the full user interface and blockchain workflows still need to be verified. A page loading successfully does not mean that smart contracts, MetaMask, or IPFS uploads are fully configured.
 
 ---
 
@@ -19,132 +19,130 @@
 
 - [1. Project Overview](#1-project-overview)
 - [2. Problem Statement](#2-problem-statement)
-- [3. Project Objectives](#3-project-objectives)
-- [4. Key Features](#4-key-features)
+- [3. Objectives](#3-objectives)
+- [4. Features and Modules](#4-features-and-modules)
 - [5. User Roles](#5-user-roles)
 - [6. Technology Stack](#6-technology-stack)
 - [7. System Architecture](#7-system-architecture)
-- [8. Application Flowcharts](#8-application-flowcharts)
-- [9. Medical Record Upload Workflow](#9-medical-record-upload-workflow)
+- [8. Application Flow](#8-application-flow)
+- [9. Medical Record Upload Flow](#9-medical-record-upload-flow)
 - [10. Smart Contracts](#10-smart-contracts)
 - [11. Repository Structure](#11-repository-structure)
-- [12. Requirements and Prerequisites](#12-requirements-and-prerequisites)
-- [13. Installation and Local Setup](#13-installation-and-local-setup)
+- [12. Prerequisites](#12-prerequisites)
+- [13. Local Installation](#13-local-installation)
 - [14. Configure Ganache and MetaMask](#14-configure-ganache-and-metamask)
-- [15. Compile and Deploy Smart Contracts](#15-compile-and-deploy-smart-contracts)
-- [16. Run the React Application](#16-run-the-react-application)
-- [17. Using the Application](#17-using-the-application)
-- [18. Configuration and Secrets](#18-configuration-and-secrets)
-- [19. Testing and Validation](#19-testing-and-validation)
-- [20. Deployment Options](#20-deployment-options)
-- [21. Deploy the Frontend to Cloudflare Pages](#21-deploy-the-frontend-to-cloudflare-pages)
-- [22. GitHub Pages Considerations](#22-github-pages-considerations)
-- [23. Troubleshooting](#23-troubleshooting)
-- [24. Security and Privacy Notes](#24-security-and-privacy-notes)
-- [25. Limitations](#25-limitations)
-- [26. Future Enhancements](#26-future-enhancements)
-- [27. Contributing](#27-contributing)
-- [28. License](#28-license)
-- [29. References](#29-references)
+- [15. Compile and Deploy Contracts](#15-compile-and-deploy-contracts)
+- [16. Run and Build the React App](#16-run-and-build-the-react-app)
+- [17. GitHub Pages Deployment](#17-github-pages-deployment)
+- [18. Environment Variables and Secrets](#18-environment-variables-and-secrets)
+- [19. Testing Checklist](#19-testing-checklist)
+- [20. Troubleshooting](#20-troubleshooting)
+- [21. Security and Privacy](#21-security-and-privacy)
+- [22. Limitations](#22-limitations)
+- [23. Future Enhancements](#23-future-enhancements)
+- [24. Contributing](#24-contributing)
+- [25. License](#25-license)
+- [26. References](#26-references)
 
 ---
 
 ## 1. Project Overview
 
-SEHR is a decentralized Electronic Health Record application intended to make health-record references easier to manage and verify. The frontend is built with React. The project uses Ethereum-compatible smart contracts for registration and record-reference operations, MetaMask for wallet access and transaction signing, and IPFS/Pinata for off-chain medical-file storage.
+SEHR (Secure Electronic Health Records) is an academic/demo application exploring how a web interface, an Ethereum-compatible blockchain, and off-chain file storage can work together for electronic health-record workflows.
 
-Medical files are too large and sensitive to place directly on a public blockchain. In the documented upload design, the file is uploaded to IPFS and the returned content identifier (CID/hash) is used by the application when interacting with a smart contract. The blockchain is therefore used as a transaction and reference layer, rather than as a storage location for the full file.
+The frontend is built with React. React Router handles navigation between patient, doctor, diagnostic, and administrative pages. Web3.js connects the browser to an injected wallet provider such as MetaMask. Solidity smart contracts handle supported registration and record-reference operations. The record-upload design uses IPFS/Pinata for off-chain files and a content identifier (CID/hash) as a reference.
 
-The repository includes UI components for patient, doctor, and diagnostic/admin workflows, Solidity contracts, Truffle configuration, diagrams, and a React landing page.
+Large medical files should not be stored directly on a public blockchain. A blockchain reference also does not make a file private: access control and encryption must be designed separately.
 
-### Live Demo
+### Live deployment
 
-**[Open SEHR Live Demo](https://ehr.pages.dev)**
+**[Open the EHR GitHub Pages site](https://thezohaibkhan.github.io/EHR/)**
 
-The URL is a deployment target, not proof that every feature is online. Full functionality depends on the correct frontend build, contract deployment, network configuration, MetaMask, and IPFS credentials/service availability.
+The URL is the project's frontend deployment. The current deployment should be treated as a demo until the landing page, deep links, wallet connection, contract network, and IPFS upload flow have all been tested.
 
 ---
 
 ## 2. Problem Statement
 
-Traditional health-record workflows can involve disconnected systems, duplicated documents, limited interoperability, and uncertainty about who changed or uploaded a record. A centralized application can also create a single point of failure and requires users to trust the system operator.
+Electronic health records can be spread across disconnected systems, making it difficult to keep records organized and traceable. A conventional centralized application also depends on the operator's infrastructure and access-control practices.
 
-This project explores a decentralized design in which:
+This project demonstrates a decentralized approach in which:
 
-- A web application provides role-specific workflows.
-- A wallet is used to authorize blockchain transactions.
-- Smart contracts manage selected registration and record-reference operations.
-- Medical files are stored off-chain through IPFS/Pinata.
-- Content identifiers and transaction receipts can provide traceable references.
+- React provides the user interface.
+- MetaMask can authorize wallet-based actions.
+- Solidity contracts process supported registration and record-reference operations.
+- IPFS/Pinata can store files off-chain.
+- A CID and blockchain transaction receipt can provide references for troubleshooting and traceability.
 
-This is an academic/demo project and should not be used to store real patient data without a professional security, privacy, regulatory, and clinical review.
+This is a learning project, not a certified healthcare system. Do not use it for real patient data without appropriate security, privacy, clinical, and regulatory review.
 
-## 3. Project Objectives
+## 3. Objectives
 
-1. Build a user-facing React application for patient, doctor, and diagnostic roles.
-2. Demonstrate wallet connection and transaction signing with MetaMask.
-3. Use Solidity smart contracts for registration and electronic-health-record references.
-4. Store files off-chain and use IPFS content identifiers rather than storing entire files on-chain.
-5. Provide patient-record and profile workflows through React Router.
-6. Document the system architecture, data flow, local setup, and deployment process.
-7. Create a project README that can be used for demonstrations, evaluation, and further development.
+1. Provide role-based UI flows for patients, doctors, and diagnostic/administrative users.
+2. Demonstrate wallet connection and transaction signing.
+3. Use Solidity smart contracts for supported registration and EHR reference operations.
+4. Keep file bytes off-chain and use IPFS content identifiers where implemented.
+5. Provide profile, dashboard, record-upload, and record-viewing pages.
+6. Document development, contract deployment, frontend hosting, and troubleshooting.
+7. Establish a foundation for future security, testing, and accessibility improvements.
 
 ---
 
-## 4. Key Features
+## 4. Features and Modules
 
-The repository contains components and routes for the following areas. The availability of a feature in the code does not imply that it will work before its contract network and external-service configuration are completed.
+The repository contains UI components and routes for the following modules. The presence of a component does not by itself guarantee that the complete feature works; deployed contracts and service configuration may still be required.
 
-| Area | Repository evidence / purpose |
+| Module | Purpose / relevant source |
 |---|---|
-| Landing page | `src/components/LandingPage_1.js`, registered at `/` |
-| Patient registration and login | Patient registration and login components |
-| Doctor registration and login | Doctor registration and login components |
-| Diagnostic registration and login | Diagnostic registration and login components |
+| Landing page | `src/components/LandingPage_1.js` |
+| Animated background | `src/components/Background3D.js` |
+| Patient registration and login | Patient registration/login components |
+| Doctor registration and login | Doctor registration/login components |
+| Diagnostic registration and login | Diagnostic registration/login components |
 | Patient dashboard | `src/components/PatientDashBoard.js` |
 | Doctor dashboard | `src/components/DoctorDashBoard.js` |
 | Diagnostic dashboard | `src/components/DiagnosticDashBoard.js` |
 | Admin dashboard | `src/components/AdminDashboard.js` |
-| Medical record upload | `src/components/PatientUpload.js` |
-| Record viewing | `src/components/ViewPatientRecords.js`, `src/components/DoctorViewRecords.js` |
+| Patient record upload | `src/components/PatientUpload.js` |
+| Record viewing | `src/components/ViewPatientRecords.js` and related components |
 | Profile pages | Patient, doctor, and diagnostic profile components |
-| Wallet / blockchain access | Web3 and MetaMask integrations in React components |
-| IPFS upload | `src/utils/pinataClient.js` and `PatientUpload.js` |
-| Smart contracts | Solidity contracts under `src/contracts/` and `contracts/` |
-| 3D background | `src/components/Background3D.js` using React Three Fiber and Three.js |
-| Architecture diagrams | `docs/DEPLOYMENT_DIAGRAM.md`, `docs/SEQUENCE_DIAGRAM.md` |
+| Wallet interaction | Web3.js and MetaMask integration |
+| File upload helper | `src/utils/pinataClient.js` |
+| Smart contracts | Solidity files under `contracts/` and/or `src/contracts/` |
+| Client-side navigation | `src/BrowseRouter.js` |
+| Deployment workflow | `.github/workflows/deploy.yml` |
 
 ---
 
 ## 5. User Roles
 
-### 5.1 Patient
+### Patient
 
-The patient-facing flow includes registration, login, dashboard access, profile viewing, and a medical-record upload route. The upload component supports choosing a file for IPFS upload or entering an existing IPFS hash.
+The patient flow includes registration/login, a patient dashboard, profile-related navigation, and a medical-record upload route. The upload component is designed to accept a file or an existing IPFS hash/CID.
 
-### 5.2 Doctor
+### Doctor
 
-The doctor-facing flow includes registration, login, dashboard access, patient-list/profile navigation, record viewing, and a doctor-form route for consultancy/prescription workflows.
+The doctor flow includes registration/login, a dashboard, patient-list/profile navigation, record viewing, and a doctor-form route for consultation or prescription-related workflows.
 
-### 5.3 Diagnostic / Admin
+### Diagnostic / Admin
 
-The project includes diagnostic registration/login and dashboard components, as well as an admin dashboard route. These pages are intended for diagnostic or administrative workflows. Their final permissions depend on the implemented component and smart-contract checks.
+The project includes diagnostic registration/login, a diagnostic dashboard, and an admin dashboard. The exact permissions and access restrictions must be confirmed against the React code and Solidity contracts.
 
-### Role overview
+### Role flowchart
 
 ```mermaid
 flowchart TD
-    A[Open SEHR website] --> B{Choose role}
+    A[Open EHR website] --> B{Choose role}
     B --> C[Patient]
     B --> D[Doctor]
     B --> E[Diagnostic / Admin]
     C --> C1[Register or log in]
     C1 --> C2[Patient dashboard]
-    C2 --> C3[View profile / upload records]
+    C2 --> C3[Profile / upload records]
     D --> D1[Register or log in]
     D1 --> D2[Doctor dashboard]
     D2 --> D3[Patient list / view records]
-    D2 --> D4[Consultancy form]
+    D2 --> D4[Doctor form]
     E --> E1[Register or log in]
     E1 --> E2[Diagnostic dashboard]
     E2 --> E3[Diagnostic workflows]
@@ -156,252 +154,167 @@ flowchart TD
 
 | Technology | Role |
 |---|---|
-| React 18 | Frontend UI and component-based application |
-| React Scripts / Create React App | Development server and production build |
-| React Router DOM 6 | Client-side routes |
-| Tailwind-style utility classes and CSS files | UI styling |
-| Three.js | 3D rendering |
-| React Three Fiber | React renderer for Three.js |
-| `@react-three/drei` | Three.js helpers, including stars and line primitives |
-| Web3.js | Ethereum-compatible provider and smart-contract interaction |
-| MetaMask | Wallet access and transaction approval |
+| React | Frontend UI |
+| Create React App / `react-scripts` | Development server and production build |
+| React Router DOM | Client-side navigation |
+| JavaScript, HTML, CSS | Application logic and styling |
+| Web3.js | Blockchain provider and contract interaction |
+| MetaMask | Wallet connection and transaction approval |
 | Solidity | Smart-contract language |
-| Truffle | Contract compilation, migration, and testing workflow |
-| Ganache | Local Ethereum-compatible development chain |
-| IPFS / Pinata | Off-chain storage for files and content identifiers |
-| Axios | HTTP requests where used |
-| Leaflet / React Leaflet | Map-related UI dependencies where used |
+| Truffle | Contract compilation and migration |
+| Ganache | Local development blockchain |
+| IPFS / Pinata | Off-chain file storage and content identifiers |
+| Three.js / React Three Fiber | Animated 3D background |
+| Leaflet | Map UI dependencies where used |
 | Font Awesome | Icons |
-| Jest / React Testing Library | Frontend testing dependencies |
+| GitHub Actions | Automated frontend build and deployment |
+| GitHub Pages | Static frontend hosting |
 
-Versions and dependencies should be taken from `package.json` and `package-lock.json`; this table describes the technologies visible in the repository rather than guaranteeing that every dependency is used by every page.
+Use `package.json`, `package-lock.json`, and the relevant Truffle configuration as the source of truth for installed versions and paths.
 
 ---
 
 ## 7. System Architecture
 
-The application can be understood as four cooperating layers.
+The project has four main layers:
 
-1. **Presentation layer:** React pages and reusable components render the landing page, role pages, dashboards, forms, and record views.
-2. **Wallet and interaction layer:** Web3 connects the browser to the injected wallet provider. MetaMask prompts the user to approve supported transactions.
-3. **File-storage layer:** IPFS/Pinata stores the uploaded file off-chain and returns a CID/hash.
-4. **Blockchain layer:** Solidity contracts process supported registration or record-reference operations and maintain blockchain state.
+1. **Presentation:** React pages, dashboards, forms, and navigation.
+2. **Wallet / interaction:** Web3.js communicates with the browser wallet provider; MetaMask asks the user to approve wallet access and transactions.
+3. **File storage:** IPFS/Pinata stores uploaded file bytes off-chain and returns a CID.
+4. **Blockchain:** Solidity contracts process supported operations and maintain on-chain state.
 
-### High-level architecture diagram
+### High-level architecture
 
 ```mermaid
 flowchart LR
     U[Patient / Doctor / Diagnostic user] --> UI[React frontend]
-    UI --> R[React Router]
-    R --> P[Role pages and dashboards]
-    P --> W[Web3.js]
-    W --> M[MetaMask wallet]
-    P --> IPFS[Pinata / IPFS]
-    IPFS --> CID[Content ID / CID]
-    CID --> W
-    M --> ETH[Ethereum-compatible network]
-    ETH --> SC[Solidity smart contracts]
-    SC --> LEDGER[On-chain state and transaction history]
-    LEDGER --> W
-    W --> P
+    UI --> ROUTER[React Router]
+    ROUTER --> PAGES[Role pages and dashboards]
+    PAGES --> WEB3[Web3.js]
+    WEB3 --> WALLET[MetaMask]
+    PAGES --> PINATA[Pinata / IPFS]
+    PINATA --> CID[Content identifier]
+    CID --> WEB3
+    WALLET --> CHAIN[Ethereum-compatible network]
+    CHAIN --> CONTRACTS[Solidity smart contracts]
+    CONTRACTS --> STATE[On-chain state / transaction history]
+    STATE --> WEB3
 ```
 
-### Deployment diagram
+### Architecture notes
 
-The repository includes a dedicated deployment diagram at [`docs/DEPLOYMENT_DIAGRAM.md`](docs/DEPLOYMENT_DIAGRAM.md). It describes the browser, React app, wallet, IPFS/Pinata, Ethereum node, smart contracts, and ledger.
-
-### Architecture considerations
-
-- The React application is a browser client, not a private server.
-- A smart contract must be deployed to the network the wallet is connected to.
-- The contract artifact must contain a deployment entry for the active network ID.
-- IPFS/Pinata credentials must be configured safely; secrets should not be committed to GitHub or exposed in public browser bundles.
-- Storing a CID on-chain does not automatically encrypt the file or make the file private.
+- GitHub Pages hosts the static frontend only.
+- It does not run Ganache, deploy contracts, or securely hold private API credentials.
+- The wallet must connect to a network where the required contracts are deployed.
+- Contract artifacts must contain deployment information for the active network.
+- An IPFS CID is a content reference, not an access-control mechanism.
 
 ---
 
-## 8. Application Flowcharts
+## 8. Application Flow
 
-### 8.1 Main application navigation
-
-The route definitions are in `src/BrowseRouter.js`. The `/` route uses `LandingPage_1`.
+The route definitions are in `src/BrowseRouter.js`. The root route `/` is intended to render `LandingPage_1`.
 
 ```mermaid
 flowchart TD
-    START([Browser opens application]) --> LAND[LandingPage_1]
-    LAND --> ROLE{Choose a role or section}
-    ROLE --> PAT[Patient routes]
-    ROLE --> DOC[Doctor routes]
-    ROLE --> DIA[Diagnostic routes]
-    ROLE --> ADM[Admin route]
+    START([Open application]) --> LAND[Landing page]
+    LAND --> ROLE{Select a section}
+    ROLE --> PAT[Patient]
+    ROLE --> DOC[Doctor]
+    ROLE --> DIA[Diagnostic]
+    ROLE --> ADM[Admin]
     ROLE --> ABOUT[About page]
     PAT --> PLOGIN[Patient login / registration]
     PLOGIN --> PDASH[Patient dashboard]
     PDASH --> PRECORD[Profile / records / upload]
     DOC --> DLOGIN[Doctor login / registration]
     DLOGIN --> DDASH[Doctor dashboard]
-    DDASH --> DLIST[Patient list / patient record]
+    DDASH --> DLIST[Patient list / records]
     DIA --> ALOGIN[Diagnostic login / registration]
     ALOGIN --> ADASH[Diagnostic dashboard]
     ADM --> ADMIN[Admin dashboard]
 ```
 
-### 8.2 Patient record upload
+---
 
-```mermaid
-flowchart TD
-    A[Patient opens upload route] --> B{MetaMask available?}
-    B -- No --> ERR1[Show wallet-related error]
-    B -- Yes --> C[Connect to Web3 provider]
-    C --> D{Choose file or enter CID}
-    D --> E[Upload file to Pinata]
-    D --> F[Use existing CID]
-    E --> G[Receive final CID]
-    F --> G
-    G --> H[Read network ID and contract artifact]
-    H --> I{Contract deployed on this network?}
-    I -- No --> ERR2[Show contract deployment error]
-    I -- Yes --> J[Request addRecord transaction]
-    J --> K[MetaMask asks user to approve]
-    K --> L{Transaction confirmed?}
-    L -- No --> ERR3[Display transaction error]
-    L -- Yes --> M[Show CID and transaction hash]
-```
+## 9. Medical Record Upload Flow
 
-### 8.3 Wallet and smart-contract interaction
+The intended upload flow is:
+
+1. The user selects a test file or enters an existing CID.
+2. The browser checks for a wallet provider when a blockchain operation is required.
+3. The frontend uploads the file to the configured Pinata/IPFS service.
+4. The service returns a CID/content identifier.
+5. The frontend loads the appropriate `UploadEhr` contract artifact and network deployment.
+6. The application requests the relevant contract transaction.
+7. MetaMask asks the user to approve or reject the transaction.
+8. The UI should report success or show an error.
 
 ```mermaid
 sequenceDiagram
     autonumber
     actor User
-    participant UI as React UI
-    participant Web3 as Web3.js
+    participant UI as React frontend
+    participant Pinata as Pinata / IPFS
     participant Wallet as MetaMask
-    participant Chain as Blockchain
-    participant Contract as Smart contract
+    participant Chain as EVM network
+    participant Contract as UploadEhr contract
 
-    User->>UI: Initiate an on-chain action
-    UI->>Web3: Request account / network details
-    Web3->>Wallet: Access injected provider
-    Wallet-->>User: Request permission or transaction approval
+    User->>UI: Select test file
+    UI->>Pinata: Upload file
+    Pinata-->>UI: Return CID
+    UI->>Wallet: Request transaction approval
+    Wallet-->>User: Display transaction request
     User->>Wallet: Approve or reject
     Wallet->>Chain: Broadcast approved transaction
     Chain->>Contract: Execute contract method
-    Contract-->>Chain: Update state / emit event
-    Chain-->>UI: Return receipt or error
-    UI-->>User: Display result
+    Contract-->>Chain: Update state / receipt
+    Chain-->>UI: Return transaction result
+    UI-->>User: Display result or error
 ```
 
-### 8.4 Off-chain file storage versus on-chain reference
-
-```mermaid
-flowchart LR
-    FILE[Medical file selected] --> PINATA[Pinata / IPFS upload]
-    PINATA --> CID[Content identifier returned]
-    CID --> UI[React UI]
-    UI --> WALLET[MetaMask signs transaction]
-    WALLET --> CONTRACT[UploadEhr contract]
-    CONTRACT --> HASH[Record reference stored on chain]
-    FILE -. file bytes remain off-chain .-> IPFSSTORE[IPFS storage]
-```
-
-### 8.5 Error handling overview
-
-```mermaid
-flowchart TD
-    A[User starts action] --> B{Wallet installed?}
-    B -- No --> X1[Explain wallet is required]
-    B -- Yes --> C{Correct network?}
-    C -- No --> X2[Ask user to switch network]
-    C -- Yes --> D{Contract artifact has deployment?}
-    D -- No --> X3[Compile and deploy contracts]
-    D -- Yes --> E{IPFS operation required?}
-    E -- Yes --> F{Storage credentials configured?}
-    F -- No --> X4[Configure storage service securely]
-    F -- Yes --> G[Perform operation]
-    E -- No --> G
-    G --> H{Transaction succeeded?}
-    H -- No --> X5[Show error and inspect logs]
-    H -- Yes --> OK[Show result / transaction receipt]
-```
-
----
-
-## 9. Medical Record Upload Workflow
-
-The upload component in `src/components/PatientUpload.js` follows this general flow:
-
-1. The patient selects a file or enters an existing IPFS hash.
-2. The frontend checks for the injected Ethereum provider.
-3. Web3 reads the current accounts and network ID.
-4. When a file is selected, `uploadFileToPinata` is called from `src/utils/pinataClient.js`.
-5. The returned CID is passed to the contract call.
-6. The frontend calls `addRecord(timestamp, finalHash)` on the `UploadEhr` contract.
-7. MetaMask asks the user to approve the transaction.
-8. On success, the UI displays the CID and transaction hash.
-
-### Sequence diagram
-
-The repository includes [`docs/SEQUENCE_DIAGRAM.md`](docs/SEQUENCE_DIAGRAM.md) with the upload sequence and a step-by-step explanation.
-
-### Important implementation detail
-
-The source code imports the contract artifact from `src/build/contracts/UploadEhr.json`. That artifact must exist and contain a deployment entry for the current network. Running Truffle migrations is part of the setup process. A missing artifact or missing network entry can cause the application to report that the contract is not deployed.
+**Note:** The precise method signatures, validation, and permission rules must be verified in the actual contract and component source. Use non-sensitive sample files only.
 
 ---
 
 ## 10. Smart Contracts
 
-The repository includes these Solidity contract files:
+The project includes the following Solidity contract files:
 
-| Contract file | Intended area |
+| Contract | Intended responsibility |
 |---|---|
-| `PatientRegistration.sol` | Patient registration and patient-related data |
-| `DoctorRegistration.sol` | Doctor registration |
-| `DiagnosticRegistration.sol` | Diagnostic registration |
-| `UploadEhr.sol` | Medical-record reference upload and retrieval |
+| `PatientRegistration.sol` | Patient registration-related operations |
+| `DoctorRegistration.sol` | Doctor registration-related operations |
+| `DiagnosticRegistration.sol` | Diagnostic registration-related operations |
+| `UploadEhr.sol` | EHR record-reference upload/retrieval operations |
 
-Contract functionality, access controls, and function signatures should be verified directly in the Solidity source before deployment. Do not assume that a contract enforces a permission rule unless the implementation actually checks it.
-
-### Smart-contract lifecycle
+### Contract lifecycle
 
 ```mermaid
 flowchart TD
     SRC[Solidity source files] --> COMPILE[Truffle compile]
-    COMPILE --> ART[Generate contract ABI and artifacts]
-    ART --> MIG[Truffle migration]
-    GAN[Ganache running] --> MIG
+    COMPILE --> ART[Generate ABI and artifacts]
+    GAN[Start Ganache or select target network] --> MIG[Run migrations]
+    ART --> MIG
     MIG --> DEPLOY[Deploy contracts]
-    DEPLOY --> ADDR[Network-specific contract addresses]
-    ADDR --> FRONTEND[Frontend reads artifact by network ID]
-    FRONTEND --> TX[Wallet-authorized contract calls]
+    DEPLOY --> ADDR[Network-specific addresses]
+    ADDR --> FRONTEND[Frontend loads matching artifact]
+    FRONTEND --> TX[Wallet-authorized contract call]
 ```
 
-### Contract development commands
-
-Run commands from the directory that contains the appropriate Truffle configuration and contract sources. In this repository, the project includes Truffle-related files in more than one location; follow the actual `truffle-config.js` and contract path for the intended workflow.
-
-Typical commands are:
-
-```bash
-npx truffle compile
-npx truffle migrate --reset
-```
-
-For local development, start Ganache before running migrations. If the application uses generated artifacts in `src/build/contracts`, confirm that the Truffle configuration writes to that path.
+The repository contains Truffle-related files and contract sources in more than one location. Before compiling or migrating, confirm which `truffle-config.js` is intended and that its contract, migration, and artifact output paths match the repository. The deployment workflow currently expects artifacts under `src/build/contracts/`.
 
 ---
 
 ## 11. Repository Structure
 
-The main files and directories include:
+The following is a representative structure based on the repository:
 
 ```text
-TheZohaibKhan-EHR-19c649c/
-├── README.md
-├── PROJECT_RUN_INSTRUCTIONS.md
-├── package.json
-├── package-lock.json
+EHR/
+├── .github/
+│   └── workflows/
+│       └── deploy.yml
 ├── public/
 │   ├── index.html
 │   ├── favicon.ico
@@ -418,16 +331,13 @@ TheZohaibKhan-EHR-19c649c/
 │   │   ├── DiagnosticDashBoard.js
 │   │   ├── AdminDashboard.js
 │   │   ├── PatientUpload.js
-│   │   ├── ViewPatientRecords.js
-│   │   ├── DoctorViewRecords.js
-│   │   └── ...other role, login, registration, and profile components
-│   ├── CSS/
-│   ├── big_css/
+│   │   └── ...other role, form, login, and profile components
+│   ├── utils/
+│   │   └── pinataClient.js
 │   ├── contracts/
 │   ├── migrations/
 │   ├── test/
-│   └── utils/
-│       └── pinataClient.js
+│   └── truffle-config.js
 ├── contracts/
 │   ├── PatientRegistration.sol
 │   ├── DoctorRegistration.sol
@@ -436,37 +346,36 @@ TheZohaibKhan-EHR-19c649c/
 ├── docs/
 │   ├── DEPLOYMENT_DIAGRAM.md
 │   └── SEQUENCE_DIAGRAM.md
-├── Results/
-└── truffle-config.js
+├── package.json
+├── package-lock.json
+└── README.md
 ```
 
-**Existing website entry points:** `public/index.html` is the standard Create React App HTML shell. The actual homepage UI is implemented in `src/components/LandingPage_1.js`, and `src/BrowseRouter.js` maps `/` to that component. Therefore, this project already has a main webpage; this README update does **not** add a duplicate standalone `index.html` website.
+This is a guide, not a guarantee that every optional file exists at the listed location. Check the current repository if paths have changed.
 
 ---
 
-## 12. Requirements and Prerequisites
+## 12. Prerequisites
 
-Install the following before running the project locally:
+Install the following tools for local development:
 
 - Node.js and npm
 - Git
 - MetaMask browser extension
-- Ganache for local blockchain development
-- Truffle CLI (can be run through `npx`)
-- A Pinata/IPFS account and appropriate API configuration if file uploads are to be tested
+- Ganache for local blockchain testing
+- Truffle through `npx`
+- Pinata/IPFS configuration if testing file uploads
 
-Check Node.js and npm:
+Verify Node.js and npm:
 
 ```bash
 node --version
 npm --version
 ```
 
-Confirm the installed tools before proceeding. Dependency versions and contract tooling can change, so use the repository's lockfile and Truffle configuration as the source of truth.
-
 ---
 
-## 13. Installation and Local Setup
+## 13. Local Installation
 
 ### Step 1 — Clone the repository
 
@@ -475,25 +384,21 @@ git clone https://github.com/TheZohaibKhan/EHR.git
 cd EHR
 ```
 
-If you are using a ZIP download instead of Git, extract the project and open a terminal in the folder containing `package.json`.
-
 ### Step 2 — Install frontend dependencies
+
+Run from the directory containing the root `package.json`:
 
 ```bash
 npm install
 ```
 
-This installs the packages defined in `package.json`.
+### Step 3 — Start a local blockchain
 
-### Step 3 — Start Ganache
-
-Open Ganache and create or start a local workspace. The repository's Truffle configuration uses a development endpoint at `127.0.0.1:7545` with network ID `*`.
-
-Confirm the actual RPC URL and chain ID shown by your Ganache workspace. These values must agree with the network configured in MetaMask.
+Open Ganache and start a local workspace. The documented development endpoint is `127.0.0.1:7545`, but use the actual RPC URL and chain ID shown by your workspace.
 
 ### Step 4 — Compile and migrate contracts
 
-Inspect the intended Truffle configuration and contract location, then run the appropriate commands. For the setup described in `PROJECT_RUN_INSTRUCTIONS.md`, the contract workflow is run from the `src` directory:
+First inspect the intended Truffle configuration. In the repository's documented setup, contract commands are run from `src`:
 
 ```bash
 cd src
@@ -502,88 +407,9 @@ npx truffle migrate --reset
 cd ..
 ```
 
-If Truffle reports that it cannot find the configuration or contracts, check whether the current folder contains `truffle-config.js` and whether its `contracts_directory`, `migrations_directory`, and `contracts_build_directory` paths match the actual repository structure. This repository has Truffle-related files in both the root and `src`, so do not run migrations from an arbitrary directory.
+If Truffle cannot find the configuration, contract source, or migration files, confirm the working directory and paths in `truffle-config.js`. Do not run migrations against a network until you have confirmed which network is selected.
 
 ### Step 5 — Start React
-
-From the directory containing the root `package.json`:
-
-```bash
-npm start
-```
-
-The Create React App development server normally opens:
-
-```text
-http://localhost:3000
-```
-
-### Step 6 — Check the app
-
-- Open the landing page.
-- Navigate to patient, doctor, and diagnostic login/registration routes.
-- Connect MetaMask when a blockchain operation requires it.
-- Test with non-sensitive sample files only.
-- Review the browser console and terminal if a route or contract interaction fails.
-
----
-
-## 14. Configure Ganache and MetaMask
-
-### Ganache
-
-The included Truffle configuration shows a development host of `127.0.0.1` and port `7545`. Your Ganache workspace may show a specific chain ID; use the value shown by the running workspace.
-
-### MetaMask
-
-1. Install MetaMask from its official website.
-2. Add a local network using the RPC URL and chain ID displayed by Ganache.
-3. Import a **test account** from Ganache only if required for local testing.
-4. Connect the account to the application.
-5. Confirm the wallet is on the same network where the contracts were deployed.
-
-Never use a real wallet's recovery phrase or private key in source code, README files, screenshots, or public repositories. Do not import a funded mainnet account into a development project.
-
-### Common network mismatch
-
-A contract artifact can contain an address for one network ID but not another. If the frontend reports that a contract is not deployed, verify:
-
-- Ganache is running.
-- Migrations completed successfully.
-- MetaMask is connected to the same chain.
-- The generated artifact includes a deployment under the current network ID.
-- The frontend imports the artifact generated by the migration you ran.
-
----
-
-## 15. Compile and Deploy Smart Contracts
-
-The smart-contract source and migrations should be treated as a separate deployment layer from the React frontend.
-
-### Recommended local sequence
-
-```bash
-# Start Ganache first.
-# Then, from the directory containing the correct Truffle config:
-npx truffle compile
-npx truffle migrate --reset
-```
-
-### What these commands do
-
-- `truffle compile` compiles Solidity sources and generates contract artifacts.
-- `truffle migrate --reset` runs migration scripts and redeploys contracts to the selected development network.
-- The generated artifact contains the ABI and network-specific deployment address used by Web3.js.
-
-### After a new deployment
-
-If the contract address changes, make sure the frontend uses the latest generated artifacts. Do not manually guess contract addresses.
-
-For public testnets or production chains, review gas fees, network settings, contract security, ownership, and access controls before deploying. Never use a real patient dataset on a public chain during a demonstration.
-
----
-
-## 16. Run the React Application
 
 From the project root:
 
@@ -591,12 +417,67 @@ From the project root:
 npm start
 ```
 
-Available scripts in `package.json` include:
+Create React App normally serves the local application at:
+
+```text
+http://localhost:3000
+```
+
+### Step 6 — Smoke-test the app
+
+- Open the landing page.
+- Check patient, doctor, and diagnostic registration/login routes.
+- Connect MetaMask only when needed.
+- Test with dummy users and non-sensitive files.
+- Check the browser console and terminal if anything fails.
+
+---
+
+## 14. Configure Ganache and MetaMask
+
+1. Start Ganache and note its RPC URL and chain ID.
+2. In MetaMask, add a local network using those exact values.
+3. Use a development/test account only.
+4. Open the React application and connect MetaMask.
+5. Ensure the wallet is connected to the same network where the contracts were deployed.
+
+Never commit a recovery phrase, private key, or funded wallet account. Never send wallet secrets to anyone.
+
+### Network mismatch checklist
+
+If the frontend reports that a contract is not deployed:
+
+- Confirm Ganache or the target network is available.
+- Confirm migrations completed successfully.
+- Confirm MetaMask is on the correct network.
+- Confirm the imported artifact has a deployment entry for that network ID.
+- Confirm the frontend uses the artifact generated by the latest migration.
+
+---
+
+## 15. Compile and Deploy Contracts
+
+Typical commands, from the directory containing the intended Truffle configuration:
+
+```bash
+npx truffle compile
+npx truffle migrate --reset
+```
+
+- `truffle compile` compiles Solidity and generates contract artifacts.
+- `truffle migrate --reset` reruns migration scripts and redeploys contracts to the selected network.
+- Artifacts contain the ABI and, after deployment, network-specific addresses.
+
+After redeployment, confirm that the frontend uses the updated artifacts. For public testnets or production networks, review fees, ownership, access control, and contract security before deploying.
+
+---
+
+## 16. Run and Build the React App
+
+### Development server
 
 ```bash
 npm start
-npm test
-npm run build
 ```
 
 ### Production build
@@ -605,355 +486,247 @@ npm run build
 npm run build
 ```
 
-Create React App generates a production build in the `build/` directory by default. The output folder is static frontend content; it does not include a running Ganache node, a deployed smart-contract network, or a private IPFS service.
+Create React App normally outputs static frontend files to `build/`.
 
-### Build validation
+### Build notes
 
-Before deployment, confirm that:
-
-- The build completes without errors.
-- The correct homepage component is routed at `/`.
-- Assets load with the intended base path.
-- React Router deep links work on the selected hosting platform.
-- The wallet and contract network are available.
-- No secret values are embedded in the public JavaScript bundle.
+- The GitHub Actions workflow sets `PUBLIC_URL: /EHR` for the repository-based Pages URL.
+- The workflow sets `CI: "false"` so existing ESLint warnings do not fail the CI production build. This is a deployment workaround, not a substitute for fixing the warnings.
+- The workflow compiles Solidity contracts and checks for expected artifact files before building React.
+- A successful React build does not deploy contracts or verify wallet/IPFS behavior.
 
 ---
 
-## 17. Using the Application
+## 17. GitHub Pages Deployment
 
-The following is a suggested demonstration sequence. Exact form fields and permissions should be verified against the actual UI and contract source.
+The repository is configured to deploy through GitHub Actions.
 
-### Patient demonstration
+### Live URL
 
-1. Open the landing page.
-2. Choose the patient login or registration action.
-3. Complete the form using test data.
-4. Open the patient dashboard.
-5. Open the profile or record-related route.
-6. For upload testing, choose a non-sensitive sample file or provide an existing test CID.
-7. Approve the transaction in MetaMask when prompted.
-8. Save the displayed CID and transaction hash for debugging or demonstration purposes.
+**https://thezohaibkhan.github.io/EHR/**
 
-### Doctor demonstration
+### Workflow
 
-1. Choose doctor login or registration.
-2. Open the doctor dashboard.
-3. Explore the patient-list route and profile navigation.
-4. Test record viewing only with test accounts and records.
-5. Use the consultancy/prescription form if configured.
+The deployment workflow is located at:
 
-### Diagnostic / admin demonstration
+```text
+.github/workflows/deploy.yml
+```
 
-1. Choose the diagnostic login or registration route.
-2. Open the diagnostic dashboard.
-3. Explore the supported diagnostic and admin pages.
-4. Verify role permissions before presenting any action as restricted or secure.
+It is intended to:
 
-### Important
+1. Check out the repository.
+2. Set up Node.js.
+3. Install npm dependencies.
+4. Compile Solidity contracts.
+5. Verify the expected contract artifacts exist.
+6. Build the React application with the `/EHR` public base path.
+7. Upload the build output as a Pages artifact.
+8. Publish the artifact to GitHub Pages.
 
-Do not demonstrate with real medical records, patient identifiers, private wallet keys, or production credentials. A working frontend does not by itself prove that privacy, authorization, or medical-data compliance requirements are met.
+### Deployment steps
+
+1. Push changes to the `main` branch.
+2. Open the repository's **Actions** tab.
+3. Open the latest `Deploy React EHR to GitHub Pages` run.
+4. Confirm both the `build` and `deploy` jobs succeed.
+5. Open the live URL and hard-refresh using `Ctrl + F5`.
+
+### React Router base path
+
+Because this repository is hosted under `/EHR/`, React Router must use the correct base path for this deployment. The route setup in `src/BrowseRouter.js` should be checked for:
+
+```jsx
+<BrowserRouter basename="/EHR">
+```
+
+Do not add this base path blindly if you later deploy to a domain where the app is hosted at `/`; adjust the configuration to match the hosting environment.
+
+### Deep-link refreshes
+
+GitHub Pages is static hosting and does not provide a general React Router server fallback by default. A route may work when navigated to inside the app but return 404 when opened or refreshed directly. Test the home page and nested routes separately, and use a compatible SPA fallback strategy if direct deep links are required.
+
+### Important: frontend versus blockchain
+
+GitHub Pages only hosts the React frontend. It does not run Ganache, deploy smart contracts, or protect privileged Pinata credentials. For other users to perform blockchain actions, the contracts must be deployed to an accessible network and the frontend must use the matching network configuration and artifacts.
 
 ---
 
-## 18. Configuration and Secrets
+## 18. Environment Variables and Secrets
 
-The IPFS helper is located at:
+The file-upload helper is located at:
 
 ```text
 src/utils/pinataClient.js
 ```
 
-Inspect this file before running uploads and identify how it reads service credentials. The repository may require you to configure Pinata credentials or adapt the client for a secure backend.
+Inspect that file to determine how it currently handles Pinata credentials.
 
-### Security rules
+### Security requirements
 
 - Never commit Pinata JWTs, API secrets, private keys, seed phrases, or deployment mnemonics.
-- Never place long-lived privileged API credentials in a React environment variable and assume they are secret. Anything bundled into a browser app can be inspected by users.
-- Prefer a backend or serverless function that keeps privileged credentials server-side.
-- If a secret has already been committed, revoke/rotate it; deleting the text in a later commit does not remove it from Git history.
+- A React environment variable included in a frontend build is not secret; users can inspect the resulting JavaScript.
+- Prefer a backend or serverless upload endpoint for privileged credentials.
+- If a credential was committed, revoke or rotate it. Removing it in a later commit does not remove it from Git history.
 - Keep local `.env` files out of version control.
-- Use dummy accounts and non-sensitive files for demonstrations.
+- Use dummy data for demonstrations.
 
-### Example local environment file
-
-Use only the variable names your code actually supports. The following is a generic illustration and must not be pasted into the repository with real values:
-
-```text
-# Example only — confirm variable names in your implementation.
-PINATA_JWT=replace-with-local-secret
-```
-
-A frontend variable such as `REACT_APP_*` is not suitable for hiding a privileged secret because it may be included in the client build.
+Only configure variable names that the implementation actually reads. Do not copy example credentials into the repository.
 
 ---
 
-## 19. Testing and Validation
+## 19. Testing Checklist
 
-The project includes Jest/React Testing Library dependencies, a React test file, and a Solidity test file under `src/test/`.
+Before presenting the application as functional, test each layer independently.
 
-Run the frontend test suite:
+- [ ] Landing page renders correctly at the deployed URL.
+- [ ] Static assets and background animations load.
+- [ ] Navigation buttons open the intended routes.
+- [ ] Registration and login forms behave as expected.
+- [ ] MetaMask missing and access-denied cases are handled.
+- [ ] Wallet network matches the deployed contracts.
+- [ ] Contract artifacts contain the correct network deployment.
+- [ ] IPFS upload success and failure are handled.
+- [ ] Blockchain transaction success and failure are displayed.
+- [ ] Record views handle missing records and unavailable contracts.
+- [ ] The production build completes.
+- [ ] Nested routes are tested after refresh.
+- [ ] No credentials or real patient information are committed.
+
+Useful commands:
 
 ```bash
 npm test
-```
-
-Run a production build:
-
-```bash
 npm run build
 ```
 
-Run Truffle tests from the directory containing the correct Truffle configuration:
+Run Truffle tests from the directory containing the intended Truffle configuration:
 
 ```bash
 npx truffle test
 ```
 
-### Suggested validation checklist
-
-- [ ] Landing page loads at `/`.
-- [ ] Navigation buttons point to valid routes.
-- [ ] Registration and login forms display validation feedback.
-- [ ] MetaMask missing / denied states are handled clearly.
-- [ ] Network mismatch is handled clearly.
-- [ ] Contract artifacts include the deployed network address.
-- [ ] IPFS upload success and failure are displayed.
-- [ ] Blockchain transaction success and failure are displayed.
-- [ ] Record viewing handles missing records and unavailable contracts.
-- [ ] Production build succeeds.
-- [ ] No credentials or sensitive patient data are committed.
-
-Tests may need environment setup, a local chain, contract artifacts, or configuration. A successful `npm run build` alone does not validate blockchain interactions.
+Tests may require a running local chain, compiled artifacts, and additional setup.
 
 ---
 
-## 20. Deployment Options
-
-### Frontend hosting
-
-The React production build can be hosted as static assets by a service such as Cloudflare Pages or another static hosting platform. This publishes the user interface, not the blockchain node or IPFS credentials.
-
-### Recommended architecture for a functional demo
-
-```mermaid
-flowchart TD
-    DEV[GitHub repository] --> BUILD[Cloud build: npm install and npm run build]
-    BUILD --> HOST[Static frontend hosting]
-    USER[User browser] --> HOST
-    HOST --> REACT[React SPA]
-    REACT --> WALLET[MetaMask]
-    WALLET --> NETWORK[Configured EVM network]
-    REACT --> API[Secure upload API / IPFS provider]
-    API --> IPFS[IPFS storage]
-    NETWORK --> CONTRACTS[Deployed Solidity contracts]
-```
-
-### Deployment checklist
-
-- Build and test the frontend.
-- Decide which chain will be used by the demo.
-- Deploy contracts to that chain and update contract artifacts.
-- Configure the IPFS upload service securely.
-- Configure the frontend's public RPC/network settings where required.
-- Test the app using a separate browser profile and test wallet.
-- Configure SPA fallback behavior for React Router routes.
-- Confirm that the published site URL and all assets load correctly.
-
----
-
-## 21. Deploy the Frontend to Cloudflare Pages
-
-The previous project deployment plan uses Cloudflare Pages for the frontend. The repository should be connected to GitHub so new commits can trigger new builds.
-
-### Step 1 — Push the project to GitHub
-
-Make sure the repository contains the React source, package manifest, lockfile, and README. Exclude secrets, local wallet files, and sensitive datasets.
-
-### Step 2 — Create a Cloudflare Pages project
-
-1. Sign in to the Cloudflare dashboard.
-2. Open **Workers & Pages**.
-3. Create a Pages project connected to Git.
-4. Select the repository that contains this React project.
-
-### Step 3 — Set the build configuration
-
-Use the following values as the starting point for the root Create React App project:
-
-| Setting | Value |
-|---|---|
-| Production branch | `main` |
-| Build command | `npm run build` |
-| Build output directory | `build` |
-| Root directory | The folder containing the root `package.json` |
-
-If the repository layout or package manifest differs from the downloaded project, adjust these values to match the actual build location.
-
-### Step 4 — Deploy and test
-
-1. Start the first deployment.
-2. Open the URL generated by Cloudflare Pages.
-3. Test the homepage and direct navigation to React routes.
-4. Verify asset paths, browser console errors, wallet connection, and contract network configuration.
-5. Add the final working URL to the Live Demo link near the top of this README.
-
-### Step 5 — Add the live URL to README
-
-Replace `https://ehr.pages.dev` in the README with the exact URL shown in the hosting dashboard if your actual project uses a different domain.
-
-### Important backend distinction
-
-Cloudflare Pages hosts the frontend bundle. It does not automatically run Ganache or deploy the Solidity contracts. For blockchain features to work for other users, the contracts must be deployed to a network they can access, and the frontend artifacts/configuration must match that deployment.
-
----
-
-## 22. GitHub Pages Considerations
-
-This project already contains a website homepage:
-
-- `public/index.html` is the HTML shell used by Create React App.
-- `src/components/LandingPage_1.js` implements the main landing page.
-- `src/BrowseRouter.js` maps `/` to `LandingPage_1`.
-
-Therefore, **do not create a second unrelated `index.html` dashboard** for this project. Build and deploy the existing React application instead.
-
-GitHub Pages can host static files, but a React single-page app using `BrowserRouter` needs correct asset paths and a fallback strategy for deep routes. Also note:
-
-- The frontend is only one part of this project.
-- Ganache on `127.0.0.1` is local to the developer's computer and cannot serve as the shared blockchain for visitors.
-- Visitors need an accessible network and matching contract deployments for on-chain actions.
-- Secrets required by Pinata must not be embedded in the public frontend.
-- A successful Pages deployment is not equivalent to a fully configured production EHR service.
-
-For a smoother SPA deployment, configure the host's rewrite/fallback behavior or use the hosting option best suited to the app's routing needs.
-
----
-
-## 23. Troubleshooting
+## 20. Troubleshooting
 
 ### `npm install` fails
 
-- Confirm Node.js and npm are installed.
-- Run the command from the folder containing `package.json`.
-- Read the first meaningful error in the terminal.
+- Run the command from the directory containing `package.json`.
+- Check the first meaningful error in the terminal.
 - Keep `package-lock.json` consistent with `package.json`.
-- Avoid deleting the lockfile as a first troubleshooting step.
+- Confirm the installed Node.js version is compatible with the project.
 
-### `npm start` fails
+### GitHub Actions reports ESLint warnings as errors
 
-- Confirm dependencies installed successfully.
-- Check whether port 3000 is already in use.
-- Review syntax/import errors reported by React Scripts.
-- Ensure imports match actual filenames and capitalization.
+The current workflow sets `CI: "false"` for the React build to prevent existing lint warnings from blocking deployment. Review and fix unused variables, naming issues, invalid links, and hook-dependency warnings in the source code when possible.
+
+### GitHub Pages returns 404
+
+- Confirm the newest Actions run has succeeded for both `build` and `deploy`.
+- Confirm Pages is configured to publish through GitHub Actions.
+- Open the repository URL with the correct capitalization and base path: `/EHR/`.
+- Verify the build artifact contains `index.html`.
+- Check `PUBLIC_URL` and the React Router `basename`.
+- Remember that nested routes can need an SPA fallback strategy.
+
+### Only the footer or background appears
+
+- Confirm `src/BrowseRouter.js` renders the intended landing component at `/`.
+- Check the browser developer console for React errors.
+- Inspect `LandingPage_1.js` and its CSS for layout, positioning, visibility, or runtime issues.
+- Confirm that the deployed build contains the latest committed code.
 
 ### MetaMask is not detected
 
 - Install and enable MetaMask.
 - Refresh the page after enabling the extension.
-- Check that the app is running in a browser where the extension is available.
+- Confirm the browser supports the wallet extension.
 
-### User denied wallet access
+### Contract is not deployed on the active network
 
-- Reconnect the wallet using MetaMask.
-- Approve account access only for the intended application.
-- Do not ask users to share private keys or recovery phrases.
-
-### Contract not deployed on this network
-
-- Start Ganache or connect to the intended EVM network.
-- Compile and migrate contracts using the correct Truffle configuration.
-- Verify the current network ID.
-- Confirm the generated artifact has a matching network deployment.
-- Confirm the frontend imports the current artifact.
+- Check the network selected in MetaMask.
+- Confirm migrations succeeded on that network.
+- Check the generated artifact for the network ID and contract address.
+- Rebuild and redeploy the frontend after updating artifacts.
 
 ### Pinata upload fails
 
-- Check the implementation in `src/utils/pinataClient.js`.
-- Confirm the service credentials are valid and configured through the intended secure mechanism.
-- Check network connectivity, API errors, file size limits, and service status.
-- Never paste privileged credentials into a public issue or commit.
-
-### React route gives a 404 after refresh
-
-- Configure the host to serve the SPA entry point for application routes.
-- Check base paths and asset paths for project hosting.
-- Test a direct refresh on the nested route, not just navigation from `/`.
-
-### A build succeeds but the demo cannot upload records
-
-A frontend build does not deploy contracts or configure Pinata. Verify the wallet, accessible chain, contract addresses/artifacts, and storage service independently.
+- Review `src/utils/pinataClient.js`.
+- Check service configuration, request errors, network access, and file-size restrictions.
+- Do not paste secrets into public issues or commits.
+- Move privileged API calls to a secure backend if credentials are currently exposed in the frontend.
 
 ---
 
-## 24. Security and Privacy Notes
+## 21. Security and Privacy
 
-Electronic health records contain highly sensitive information. Treat this project as a learning/demo implementation unless it has undergone a thorough security and compliance review.
+Electronic health records are highly sensitive. Treat this as an academic/demo project unless it has undergone a full security, privacy, and compliance review.
 
-1. **Do not put medical file contents on a public blockchain.** Blockchain data is typically replicated and difficult to remove.
-2. **A CID is not encryption.** If a file is publicly retrievable from IPFS, anyone with access to the content identifier may be able to retrieve it unless a suitable access/encryption design is used.
-3. **Do not expose API secrets.** Browser bundles and public repositories are visible to users.
-4. **Use encryption and key management deliberately.** Encrypt sensitive files before off-chain storage if appropriate, and define who can access the decryption key.
-5. **Audit access control.** Verify smart-contract modifiers, ownership, role validation, and authorization checks in the source.
-6. **Use test data.** Never upload real patient files to an unreviewed demo.
-7. **Review compliance.** Production healthcare software may be subject to privacy, security, retention, and medical-record regulations depending on the jurisdiction.
-8. **Protect wallet accounts.** Use local/test accounts for development, not accounts containing real assets.
-
----
-
-## 25. Limitations
-
-- The frontend depends on browser wallet availability for wallet-based interactions.
-- Contract calls require a deployed contract on the selected network and a matching artifact.
-- Ganache is a local development chain; it is not a shared public deployment for visitors.
-- IPFS/Pinata behavior depends on the service configuration and credentials.
-- A stored CID or hash does not, by itself, enforce privacy or access control over the underlying file.
-- Hosting the React build does not host the blockchain or provide a secure backend automatically.
-- The exact behavior and security properties of each route must be verified against its component and Solidity implementation.
-- The repository contains Truffle configuration and Solidity sources in multiple locations; confirm the intended build path before deployment.
-- This project should not be represented as production-ready clinical infrastructure without further work.
+1. **Do not put medical file contents on a public blockchain.** On-chain data is replicated and difficult to remove.
+2. **A CID is not encryption.** A retrievable IPFS file may be accessible to anyone who obtains its CID unless a suitable encryption and access-control design is used.
+3. **Protect API credentials.** Browser bundles and public repositories are visible to users.
+4. **Use appropriate encryption and key management** for any sensitive file-storage design.
+5. **Audit access controls.** Verify role checks, contract modifiers, ownership, and authorization logic in the actual source.
+6. **Use test data only.** Do not upload real patient records to an unreviewed demo.
+7. **Review applicable regulations** before any real-world healthcare deployment.
+8. **Use test wallets** for development and demonstrations.
 
 ---
 
-## 26. Future Enhancements
+## 22. Limitations
 
-Potential improvements include:
-
-- A secure backend or serverless API for privileged IPFS uploads.
-- Encryption of medical files before off-chain storage.
-- More robust patient consent and revocable access-grant workflows.
-- Automated contract tests for authorization and edge cases.
-- A clear network/environment configuration layer.
-- Better loading, empty, error, and transaction-pending states.
-- An audit trail UI for record references and consent operations.
-- Automated accessibility and responsive UI tests.
-- Dependency scanning, secret scanning, and Solidity security analysis.
-- CI build checks for pull requests.
-- A production deployment guide that separates frontend hosting, contract deployment, and storage configuration.
+- The app depends on browser wallet availability for wallet-based actions.
+- Contract calls require deployed contracts and matching artifacts.
+- Ganache is a local development blockchain, not a shared chain for public visitors.
+- IPFS/Pinata functionality depends on valid service configuration.
+- A CID does not itself enforce privacy or authorization.
+- Static frontend hosting does not provide a backend or deploy smart contracts.
+- GitHub Pages requires correct asset paths and special consideration for React Router deep links.
+- The exact behavior and security of each feature must be verified against the component and Solidity implementation.
+- The project is not production-ready healthcare infrastructure without substantial additional work.
 
 ---
 
-## 27. Contributing
+## 23. Future Enhancements
 
-Contributions are welcome for documentation, tests, accessibility, and improvements to the demo.
+- Add a secure backend/serverless API for privileged file uploads.
+- Encrypt sensitive files before off-chain storage and define key access policies.
+- Improve patient consent and revocable access-grant workflows.
+- Add automated Solidity tests for authorization and edge cases.
+- Centralize network and environment configuration.
+- Improve loading, error, empty, and transaction-pending states.
+- Add an audit-trail interface for record references and consent operations.
+- Add accessibility, responsive-layout, and browser tests.
+- Add dependency scanning, secret scanning, and smart-contract security analysis.
+- Fix existing ESLint warnings instead of relying on CI warning suppression.
+- Separate frontend hosting, contract deployment, and storage-service configuration in deployment documentation.
+
+---
+
+## 24. Contributing
+
+Contributions to documentation, testing, accessibility, and the demo are welcome.
 
 1. Fork the repository.
 2. Create a feature branch.
 3. Make a focused change.
-4. Run the available tests and production build.
+4. Run relevant tests and the production build.
 5. Open a pull request describing the change and how it was tested.
 
-Please do not submit real patient information, wallet secrets, API tokens, or private keys.
+Do not commit real patient data, private keys, wallet recovery phrases, or API credentials.
 
 ---
 
-## 28. License
+## 25. License
 
-No explicit license was verified in the supplied project files. Unless a license is added to the repository, do not assume that others have permission to reuse, redistribute, or modify the project. Add a suitable `LICENSE` file if you intend to publish it as open source.
+No explicit license has been confirmed in the supplied project details. Unless a license is added to the repository, do not assume that others have permission to reuse, redistribute, or modify this project. Add an appropriate `LICENSE` file if you intend to publish it as open source.
 
 ---
 
-## 29. References
+## 26. References
 
 - [React](https://react.dev/)
 - [Create React App](https://create-react-app.dev/)
@@ -964,7 +737,8 @@ No explicit license was verified in the supplied project files. Unless a license
 - [Truffle Documentation](https://archive.trufflesuite.com/docs/)
 - [IPFS Documentation](https://docs.ipfs.tech/)
 - [Pinata Documentation](https://docs.pinata.cloud/)
-- [Cloudflare Pages Documentation](https://developers.cloudflare.com/pages/)
+- [GitHub Pages Documentation](https://docs.github.com/en/pages)
+- [GitHub Actions Documentation](https://docs.github.com/en/actions)
 
 ---
 
